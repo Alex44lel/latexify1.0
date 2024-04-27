@@ -26,21 +26,27 @@ class CustomLatexDataset(Dataset):
         self.tokenizer = tokenizer
 
     def __len__(self):
-        return len(self.image_df.iloc[self.start_split : self.end_split])
+        return len(self.image_df.iloc[self.start_split: self.end_split])
 
     def __getitem__(self, idx):
         # print(idx)
         img_label = self.image_df.iloc[self.start_split + idx]["word2id"]
         name = self.image_df.iloc[self.start_split + idx]["image"]
+
+        tok_label = self.tokenizer.encode(img_label)
+
+        y = tok_label[1:]
+        x = tok_label[:-1]
         # print(name)
 
         image = self.imgs_y[name]
 
-        return image, img_label
+        return image, x, y
 
 
 def get_data_loaders(df_combined, y_combined, split, tokenizer, batch_size=56):
-    current_dataset = CustomLatexDataset(df_combined, y_combined, split, tokenizer)
+    current_dataset = CustomLatexDataset(
+        df_combined, y_combined, split, tokenizer)
 
     current_dataset_loader = DataLoader(
         current_dataset, batch_size=batch_size, shuffle=True
