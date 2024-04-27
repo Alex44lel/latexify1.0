@@ -7,6 +7,8 @@ import torch
 #
 # The `__init__` method should take in a tokenizer class.
 # See `LMDataset` (project 3) for more details.
+
+
 class CustomLatexDataset(Dataset):
     def __init__(self, df, y, split, tokenizer):
         assert split in {"train", "test", "validation"}
@@ -27,7 +29,7 @@ class CustomLatexDataset(Dataset):
         self.tokenizer = tokenizer
 
     def __len__(self):
-        return len(self.image_df.iloc[self.start_split: self.end_split])
+        return len(self.image_df.iloc[self.start_split : self.end_split])
 
     def __getitem__(self, idx):
         # print(idx)
@@ -37,12 +39,12 @@ class CustomLatexDataset(Dataset):
         tok_label = self.tokenizer.encode(img_label)
 
         if not self.tokenizer.use_gpt:
-          y = tok_label[1:]
-          x = tok_label[:-1]
+            y = tok_label[1:]
+            x = tok_label[:-1]
         # print(name)
         else:
-          y = tok_label[:]
-          x = tok_label[:]
+            y = tok_label[:]
+            x = tok_label[:]
 
         image = self.imgs_y[name]
         to_tensor = ToTensor()
@@ -52,8 +54,7 @@ class CustomLatexDataset(Dataset):
 
 
 def get_data_loaders(df_combined, y_combined, split, tokenizer, batch_size=56):
-    current_dataset = CustomLatexDataset(
-        df_combined, y_combined, split, tokenizer)
+    current_dataset = CustomLatexDataset(df_combined, y_combined, split, tokenizer)
 
     current_dataset_loader = DataLoader(
         current_dataset, batch_size=batch_size, shuffle=True

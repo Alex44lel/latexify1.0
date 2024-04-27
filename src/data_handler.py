@@ -42,9 +42,8 @@ class Im2LatexDataHandler:
         df_test = df_test.drop_duplicates(subset="image", keep="first")
         df_valid = df_valid.drop_duplicates(subset="image", keep="first")
 
-        print(len(df_train),len(df_test),len(df_valid))
-        df_combined = pd.concat(
-            [df_train, df_valid, df_test]).reset_index(drop=True)
+        print(len(df_train), len(df_test), len(df_valid))
+        df_combined = pd.concat([df_train, df_valid, df_test]).reset_index(drop=True)
 
         df_combined = df_combined.drop_duplicates(subset="image", keep="first")
         y_combined = {}
@@ -56,6 +55,6 @@ class Im2LatexDataHandler:
             df_combined = df_combined.reset_index(drop=True)
             print("Index after reset:", df_combined.index)
 
-        print(len(df_combined),len(y_combined))
+        print(len(df_combined), len(y_combined))
 
         return df_combined, y_combined

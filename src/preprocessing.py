@@ -55,12 +55,16 @@ class PreProcessing:
                 image = pad_transform(image)
                 label_gpt = self.tokenizer_gpt.encode(label)
                 label_transformer = self.tokenizer_transformer.encode(label)
-                new_row = {'name': name, 'image': image, "label_gpt": label_gpt,
-                           "label_transformer": label_transformer}
+                new_row = {
+                    "name": name,
+                    "image": image,
+                    "label_gpt": label_gpt,
+                    "label_transformer": label_transformer,
+                }
                 new_rows.append(new_row)
 
             new_batch_df = pd.DataFrame(new_rows)
-            pickle_filename = f'batch_{start}_{batch_size}.pkl'
+            pickle_filename = f"batch_{start}_{batch_size}.pkl"
             new_batch_df.to_pickle(pickle_filename)
             print(pickle_filename)
             del new_rows, new_batch_df  # Delete large variables
@@ -76,18 +80,15 @@ class PreProcessing:
         # df_test = df_test.drop_duplicates(subset="image", keep="first")
         # df_valid = df_valid.drop_duplicates(subset="image", keep="first")
 
-        df_train_processes = pd.DataFrame({
-            "name": [],
-            "image": [],
-            "label_gpt": [],
-            "label_transformer": []
-        })
+        df_train_processes = pd.DataFrame(
+            {"name": [], "image": [], "label_gpt": [], "label_transformer": []}
+        )
 
         self.load_data_batches(df_train, self.batch_size)
 
         df_train_processes.reset_index(drop=True, inplace=True)
 
-        pickle_filename = 'df_train_processes.pkl'
+        pickle_filename = "df_train_processes.pkl"
         df_train_processes.to_pickle(pickle_filename)
 
         """
@@ -105,9 +106,9 @@ class PreProcessing:
 
         pickle_filename = 'df_test_processes.pkl'
         df_test_processes.to_pickle(pickle_filename)
-        
 
-       
+
+
         df_valid_processes = pd.DataFrame({
             "name":[],
             "image": [],
@@ -122,7 +123,7 @@ class PreProcessing:
 
         pickle_filename = 'df_valid_processes.pkl'
         df_valid_processes.to_pickle(pickle_filename)
-        
-        
-        return 
+
+
+        return
         """

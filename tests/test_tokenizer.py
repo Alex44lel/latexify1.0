@@ -4,16 +4,18 @@ from src.tokenizer import Tokenizer
 def test_tokenizer_encode():
     tokens = [0, 1, 2, 3]
 
-    tokenizer = Tokenizer(require_start_padding=False)
-    assert list(tokenizer.encode(tokens)) == tokens + [-1] * (
+    tokenizer = Tokenizer(use_gpt=False)
+    assert list(tokenizer.encode(tokens)) == tokens + [tokenizer.pad_token_id] * (
         tokenizer.get_max_label_length() - len(tokens)
     )
 
     # vocab_size - 2 is used as the start token
-    tokenizer = Tokenizer(require_start_padding=True)
+    tokenizer = Tokenizer(use_gpt=True)
     assert list(tokenizer.encode(tokens)) == [
-        tokenizer.get_vocab_size() - 2
-    ] + tokens + [-1] * (tokenizer.get_max_label_length() - len(tokens))
+        tokenizer.get_vocab_size() - 1
+    ] + tokens + [tokenizer.pad_token_id] * (
+        tokenizer.get_max_label_length() - len(tokens)
+    )
 
 
 def test_tokenizer_decode():
@@ -131,7 +133,7 @@ def test_tokenizer_decode():
         60,
         13,
     ]
-    tokenizer = Tokenizer(require_start_padding=False)
+    tokenizer = Tokenizer(use_gpt=False)
 
     assert (
         tokenizer.decode(formulas)
