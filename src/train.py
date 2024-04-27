@@ -137,9 +137,11 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             train_per.update(logits, y)  # type: ignore
 
         avg_loss = train_loss / len(train_loader)
+
         print(
-            f"Train: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, Accuracy: {
-                train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, Perplexity: {train_per.compute():.4f}"
+          f"Train: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
+          f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
+          f"Perplexity: {train_per.compute():.4f}"
         )
 
         # test
@@ -182,8 +184,9 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
 
         avg_loss = test_loss / len(test_loader)
         print(
-            f"Test: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, Accuracy: {
-                test_acc.compute():.4f}, BLEU: {test_bleu.compute():.4f}, Perplexity: {test_per.compute():.4f}"
+          f"Test: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
+          f"Accuracy: {test_acc.compute():.4f}, BLEU: {test_bleu.compute():.4f}, "
+          f"Perplexity: {test_per.compute():.4f}"
         )
 
     torch.save(model.state_dict(), f"./models/latexify-{model.name}.pth")
