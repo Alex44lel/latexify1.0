@@ -291,21 +291,21 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
 
-def resnet18(in_channels):
+def resnet18(in_channels=3):
     return ResNet(resnet_variant=model_parameters["resnet18"], in_channels=in_channels)
 
 
-def resnet34(in_channels):
+def resnet34(in_channels=3):
     return ResNet(resnet_variant=model_parameters["resnet34"], in_channels=in_channels)
 
 
-def resnet50(in_channels):
+def resnet50(in_channels=3):
     return ResNet(resnet_variant=model_parameters["resnet50"], in_channels=in_channels)
 
 
-def resnet101(in_channels):
+def resnet101(in_channels=3):
     return ResNet(resnet_variant=model_parameters["resnet101"], in_channels=in_channels)
 
 
-def resnet152(in_channels):
+def resnet152(in_channels=3):
     return ResNet(resnet_variant=model_parameters["resnet152"], in_channels=in_channels)

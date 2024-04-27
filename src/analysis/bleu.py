@@ -63,11 +63,6 @@ def _bleu_score_update(
             if len_candidate - i > 0:
                 possible_matches_by_order[i] += len_candidate - i
 
-    if torch.min(possible_matches_by_order) == 0:
-        raise ValueError(
-            f"the input is too short to find all n-gram matches with n_gram={n_gram}"
-        )
-
     return input_len, target_len, matches_by_order, possible_matches_by_order
 
 
@@ -85,7 +80,7 @@ def _bleu_score_compute(
         )
 
     if weights is None:
-        weights = torch.tensor([1 / n_gram] * n_gram)
+        weights = torch.tensor([1 / n_gram] * n_gram, device=matches_by_order.device)
 
     precisions = matches_by_order / possible_matches_by_order
     geometric_mean = torch.exp(torch.sum(weights * torch.log(precisions)))
@@ -203,6 +198,9 @@ class BLEUScore:
         """
         if torch.sum(self.matches_by_order) == 0:
             return torch.tensor(0.0, dtype=torch.float64, device=self.device)
+        
+        print(self.device)
+        
         return _bleu_score_compute(
             self.input_len,
             self.target_len,

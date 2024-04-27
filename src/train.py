@@ -100,15 +100,16 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
         # train
         model.train()
         train_loss = 0
-        train_acc = MulticlassAccuracy()
-        train_per = Perplexity(ignore_index=-1)
-        train_bleu = BLEUScore(n_gram=4)
+        train_acc = MulticlassAccuracy(device=device)
+        train_per = Perplexity(ignore_index=-1, device=device)
+        train_bleu = BLEUScore(n_gram=4, device=device)
+        i = 0
         for images, x, y in train_loader:
             images = images.to(device)
             x = x.to(device)
             y = y.to(device)
 
-            logits, loss = model(x, images, y)  # type: ignore
+            logits, loss = model(x, images, y)
             train_loss += loss.item()
 
             optimizer.zero_grad()
@@ -118,14 +119,12 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             # ==== Analysis ====
 
             # accuracy
-            # TODO: use correct y here
             _, predicted = torch.max(logits, dim=-1)
-            train_acc.update(predicted.view(-1), y.view(-1))  # type: ignore
+            train_acc.update(predicted.view(-1), y.view(-1))
 
             # bleu: incorrect impl right now
-            # TODO: use correct y here
             reference_corpus = [
-                [tokenizer.decode_seq(y_seq)] for y_seq in y  # type: ignore
+                [tokenizer.decode_seq(y_seq)] for y_seq in y
             ]
             candidate_corpus = [
                 tokenizer.decode_seq(predicted_seq) for predicted_seq in predicted
@@ -133,45 +132,53 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             train_bleu.update(candidate_corpus, reference_corpus)
 
             # perplexity: lower -> better
-            # TODO: use correct y here
-            train_per.update(logits, y)  # type: ignore
+            train_per.update(logits, y)
+
+            if (i%100 == 0):
+              print(
+                  f"Train: Epoch [{epoch+1}/{num_epochs}], Iter: {i}, "
+                  f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
+                  f"Perplexity: {train_per.compute():.4f}"
+              )
+
+            i+=1
 
         avg_loss = train_loss / len(train_loader)
 
         print(
             f"Train: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
+<<<<<<< HEAD
             f"Accuracy: {train_acc.compute():.4f}, BLEU: {
                 train_bleu.compute():.4f}, "
+=======
+            f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
+>>>>>>> 04fac6932c8843d0673604ce65b4966ec82d6d17
             f"Perplexity: {train_per.compute():.4f}"
         )
 
         # test
         model.eval()
         test_loss = 0
-        test_acc = MulticlassAccuracy()
-        test_per = Perplexity(ignore_index=-1)
-        test_bleu = BLEUScore(n_gram=4)
+        test_acc = MulticlassAccuracy(device=device)
+        test_per = Perplexity(ignore_index=-1, device=device)
+        test_bleu = BLEUScore(n_gram=4, device=device)
         with torch.inference_mode():
             for images, x, y in test_loader:
                 images = images.to(device)
                 x = x.to(device)
                 y = y.to(device)
 
-                # TODO: use correct x and y here
-                logits, loss = model(x, images, y)  # type: ignore
+                logits, loss = model(x, images, y)
                 test_loss += loss.item()
 
                 # ==== Analysis ====
 
                 # accuracy
-                # TODO: use correct y here
                 _, predicted = torch.max(logits, dim=-1)
-                test_acc.update(predicted.view(-1), y.view(-1))  # type: ignore
+                test_acc.update(predicted.view(-1), y.view(-1))
 
                 # bleu: incorrect impl right now
-                # TODO: use correct y here
                 reference_corpus = [
-                    # type: ignore
                     [tokenizer.decode_seq(y_seq)] for y_seq in y
                 ]
                 candidate_corpus = [
@@ -180,14 +187,17 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
                 test_bleu.update(candidate_corpus, reference_corpus)
 
                 # perplexity: lower -> better
-                # TODO: use correct y here
-                test_per.update(logits, y)  # type: ignore
+                test_per.update(logits, y)
 
         avg_loss = test_loss / len(test_loader)
         print(
             f"Test: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
+<<<<<<< HEAD
             f"Accuracy: {test_acc.compute():.4f}, BLEU: {
                 test_bleu.compute():.4f}, "
+=======
+            f"Accuracy: {test_acc.compute():.4f}, BLEU: {test_bleu.compute():.4f}, "
+>>>>>>> 04fac6932c8843d0673604ce65b4966ec82d6d17
             f"Perplexity: {test_per.compute():.4f}"
         )
 
