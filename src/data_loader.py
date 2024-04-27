@@ -1,4 +1,5 @@
 from torch.utils.data import Dataset, DataLoader
+from torchvision.transforms import ToTensor
 
 
 # TODO: this class should load the dataset directly from pkl file
@@ -40,6 +41,8 @@ class CustomLatexDataset(Dataset):
         # print(name)
 
         image = self.imgs_y[name]
+        to_tensor = ToTensor()
+        image = to_tensor(image)
 
         return image, x, y
 
