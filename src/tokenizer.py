@@ -20,21 +20,13 @@ class Tokenizer:
         encoded_tokens = torch.tensor(tokens, dtype=torch.long)
         len_label = len(encoded_tokens)
         dif = self.max_label_length - len_label
-<<<<<<< HEAD
-        encoded_tokens = torch.cat((encoded_tokens, torch.full(
-            (dif,), self.pad_token_id, dtype=torch.long)))
-        if self.use_gpt:
-            encoded_tokens = torch.cat(
-                [torch.tensor([self.start_token_id],
-                              dtype=torch.long), encoded_tokens]
-=======
         encoded_tokens = torch.cat(
             (encoded_tokens, torch.full((dif,), self.pad_token_id, dtype=torch.long))
         )
         if self.use_gpt:
             encoded_tokens = torch.cat(
-                [torch.tensor([self.start_token_id], dtype=torch.long), encoded_tokens]
->>>>>>> 04fac6932c8843d0673604ce65b4966ec82d6d17
+                [torch.tensor([self.start_token_id],
+                              dtype=torch.long), encoded_tokens]
             )
         return encoded_tokens
 

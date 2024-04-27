@@ -4,7 +4,7 @@ from PIL import Image
 
 
 class Im2LatexDataHandler:
-    def __init__(self, data_dir="./data/dataset5", small = False):
+    def __init__(self, data_dir="./data/dataset5", small=False):
         self.data_dir = data_dir
         self.image_dir = os.path.join(data_dir, "images-post")
         self.training_dir = os.path.join(data_dir, "training_56")
@@ -46,14 +46,9 @@ class Im2LatexDataHandler:
         df_test = df_test.drop_duplicates(subset="image", keep="first")
         df_valid = df_valid.drop_duplicates(subset="image", keep="first")
 
-<<<<<<< HEAD
-        print(len(df_train), len(df_test), len(df_valid))
+        print()
         df_combined = pd.concat(
             [df_train, df_valid, df_test]).reset_index(drop=True)
-=======
-        print()
-        df_combined = pd.concat([df_train, df_valid, df_test]).reset_index(drop=True)
->>>>>>> 04fac6932c8843d0673604ce65b4966ec82d6d17
 
         df_combined = df_combined.drop_duplicates(subset="image", keep="first")
         y_combined = {}
@@ -67,8 +62,4 @@ class Im2LatexDataHandler:
 
         print(len(df_combined), len(y_combined))
 
-<<<<<<< HEAD
-        return df_combined, y_combined
-=======
         return df_combined, y_combined, (len(df_train), len(df_test), len(df_valid))
->>>>>>> 04fac6932c8843d0673604ce65b4966ec82d6d17

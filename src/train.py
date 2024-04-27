@@ -134,25 +134,22 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             # perplexity: lower -> better
             train_per.update(logits, y)
 
-            if (i%100 == 0):
-              print(
-                  f"Train: Epoch [{epoch+1}/{num_epochs}], Iter: {i}, "
-                  f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
-                  f"Perplexity: {train_per.compute():.4f}"
-              )
+            if (i % 100 == 0):
+                print(
+                    f"Train: Epoch [{epoch+1}/{num_epochs}], Iter: {i}, "
+                    f"Accuracy: {train_acc.compute():.4f}, BLEU: {
+                        train_bleu.compute():.4f}, "
+                    f"Perplexity: {train_per.compute():.4f}"
+                )
 
-            i+=1
+            i += 1
 
         avg_loss = train_loss / len(train_loader)
 
         print(
             f"Train: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
-<<<<<<< HEAD
             f"Accuracy: {train_acc.compute():.4f}, BLEU: {
                 train_bleu.compute():.4f}, "
-=======
-            f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
->>>>>>> 04fac6932c8843d0673604ce65b4966ec82d6d17
             f"Perplexity: {train_per.compute():.4f}"
         )
 
@@ -192,12 +189,8 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
         avg_loss = test_loss / len(test_loader)
         print(
             f"Test: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
-<<<<<<< HEAD
             f"Accuracy: {test_acc.compute():.4f}, BLEU: {
                 test_bleu.compute():.4f}, "
-=======
-            f"Accuracy: {test_acc.compute():.4f}, BLEU: {test_bleu.compute():.4f}, "
->>>>>>> 04fac6932c8843d0673604ce65b4966ec82d6d17
             f"Perplexity: {test_per.compute():.4f}"
         )
 
