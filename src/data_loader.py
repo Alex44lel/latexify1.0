@@ -1,12 +1,14 @@
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import ToTensor
-
+import torch
 
 # TODO: this class should load the dataset directly from pkl file
 # instead relying on external dataframe
 #
 # The `__init__` method should take in a tokenizer class.
 # See `LMDataset` (project 3) for more details.
+
+
 class CustomLatexDataset(Dataset):
     def __init__(self, df, y, split, tokenizer):
         assert split in {"train", "test", "validation"}
@@ -36,9 +38,13 @@ class CustomLatexDataset(Dataset):
 
         tok_label = self.tokenizer.encode(img_label)
 
-        y = tok_label[1:]
-        x = tok_label[:-1]
+        if not self.tokenizer.use_gpt:
+            y = tok_label[1:]
+            x = tok_label[:-1]
         # print(name)
+        else:
+            y = tok_label[:]
+            x = tok_label[:]
 
         image = self.imgs_y[name]
         to_tensor = ToTensor()

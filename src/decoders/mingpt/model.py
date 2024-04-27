@@ -96,7 +96,8 @@ class Block(nn.Module):
             )
         )
         m = self.mlp
-        self.mlpf = lambda x: m.dropout(m.c_proj(m.act(m.c_fc(x))))  # MLP forward
+        self.mlpf = lambda x: m.dropout(
+            m.c_proj(m.act(m.c_fc(x))))  # MLP forward
 
     def forward(self, x):
         x = x + self.attn(self.ln_1(x))
@@ -130,7 +131,7 @@ class GPT(nn.Module):
         assert config.vocab_size is not None
         assert config.block_size is not None
         self.block_size = config.block_size
-
+        self.config = config
         type_given = config.model_type is not None
         params_given = all(
             [
@@ -150,14 +151,16 @@ class GPT(nn.Module):
                         n_layer=12, n_head=12, n_embd=768
                     ),  # 117M params
                     # GPT-2 configs
-                    "gpt2": dict(n_layer=12, n_head=12, n_embd=768),  # 124M params
+                    # 124M params
+                    "gpt2": dict(n_layer=12, n_head=12, n_embd=768),
                     "gpt2-medium": dict(
                         n_layer=24, n_head=16, n_embd=1024
                     ),  # 350M params
                     "gpt2-large": dict(
                         n_layer=36, n_head=20, n_embd=1280
                     ),  # 774M params
-                    "gpt2-xl": dict(n_layer=48, n_head=25, n_embd=1600),  # 1558M params
+                    # 1558M params
+                    "gpt2-xl": dict(n_layer=48, n_head=25, n_embd=1600),
                     # Gophers
                     "gopher-44m": dict(n_layer=8, n_head=16, n_embd=512),
                     # (there are a number more...)
@@ -173,7 +176,8 @@ class GPT(nn.Module):
                 wte=nn.Embedding(config.vocab_size, config.n_embd),
                 wpe=nn.Embedding(config.block_size, config.n_embd),
                 drop=nn.Dropout(config.embd_pdrop),
-                h=nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
+                h=nn.ModuleList([Block(config)
+                                for _ in range(config.n_layer)]),
                 ln_f=nn.LayerNorm(config.n_embd),
             )
         )
@@ -283,7 +287,7 @@ class GPT(nn.Module):
 
         # forward the GPT model itself
         inp = hidden
-        if t != 0: # if idx is empty
+        if t != 0:  # if idx is empty
             tok_emb = self.transformer.wte(
                 idx
             )  # token embeddings of shape (b, t, n_embd)
@@ -302,12 +306,13 @@ class GPT(nn.Module):
 
         # if we are given some desired targets also calculate the loss
         loss = None
+        s_logits = logits
         if targets is not None:
-            s_logits = logits[:, hidden.shape[1] - 1 : -1].contiguous()
+            s_logits = logits[:, hidden.shape[1] - 1: -1].contiguous()
             loss = F.cross_entropy(
                 s_logits.view(-1, s_logits.size(-1)),
                 targets.view(-1),
                 ignore_index=-1,
             )
 
-        return logits, loss
+        return s_logits, loss
