@@ -29,7 +29,7 @@ def get_model(
     decoder = None
     embed_dim = None
     tokenizer = Tokenizer(
-        **{"require_start_padding": decoder_name == "gpt", **tokenizer_args}
+        **{"use_gpt": decoder_name == "gpt", **tokenizer_args}
     )
 
     if encoder_name == "resnet18":
@@ -108,7 +108,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             x = x.to(device)
             y = y.to(device)
 
-            #print(images.dtype,x.dtype,y.dtype)
+            print(images.dtype,x.dtype,y.dtype)
             logits, loss = model(x, images, y)  # type: ignore
             train_loss += loss.item()
 

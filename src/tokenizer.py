@@ -5,25 +5,25 @@ import torch
 class Tokenizer:
     def __init__(
         self,
-        require_start_padding: bool,
+        use_gpt: bool,
         file_path="./data/dataset5/step2/dict_id2word.pkl",
     ):
         """Initializes the tokenizer."""
         self.dict_id2word = pd.read_pickle(file_path)
-        self.require_start_padding = require_start_padding
+        self.use_gpt = use_gpt
         self.vocab_size = len(self.dict_id2word)
         self.start_token_id = self.vocab_size
         self.pad_token_id = -1
         self.max_label_length = 151
 
     def encode(self, tokens: list):
-        encoded_tokens = torch.tensor(tokens)
+        encoded_tokens = torch.tensor(tokens,dtype= torch.int)
         len_label = len(encoded_tokens)
         dif = self.max_label_length - len_label
-        encoded_tokens = torch.cat((encoded_tokens, -torch.ones(dif)))
-        if self.require_start_padding:
+        encoded_tokens = torch.cat((encoded_tokens, -torch.ones(dif,dtype= torch.int)))
+        if self.use_gpt:
             encoded_tokens = torch.cat(
-                [torch.tensor([self.start_token_id]), encoded_tokens]
+                [torch.tensor([self.start_token_id],dtype= torch.int), encoded_tokens]
             )
         return encoded_tokens
 

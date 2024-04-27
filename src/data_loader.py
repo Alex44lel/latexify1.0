@@ -36,18 +36,19 @@ class CustomLatexDataset(Dataset):
 
         tok_label = self.tokenizer.encode(img_label)
 
-        y = tok_label[1:]
-        x = tok_label[:-1]
+        if not self.tokenizer.use_gpt:
+          y = tok_label[1:]
+          x = tok_label[:-1]
         # print(name)
-
-        int_x = x.round().to(torch.int32)
-        int_y = y.round().to(torch.int32)
+        else:
+          y = tok_label[:]
+          x = tok_label[:]
 
         image = self.imgs_y[name]
         to_tensor = ToTensor()
         image = to_tensor(image)
 
-        return image, int_x, int_y
+        return image, x, y
 
 
 def get_data_loaders(df_combined, y_combined, split, tokenizer, batch_size=56):
