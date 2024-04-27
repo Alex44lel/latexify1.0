@@ -63,11 +63,6 @@ def _bleu_score_update(
             if len_candidate - i > 0:
                 possible_matches_by_order[i] += len_candidate - i
 
-    if torch.min(possible_matches_by_order) == 0:
-        raise ValueError(
-            f"the input is too short to find all n-gram matches with n_gram={n_gram}"
-        )
-
     return input_len, target_len, matches_by_order, possible_matches_by_order
 
 
