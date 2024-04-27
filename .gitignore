@@ -1,0 +1,18 @@
+.config
+latexify
+
+# Python
+__pycache__
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Pytest
+.pytest_cache
+
+# dataset
+sample_data
+data/dataset5
+
+/preprocess
+/images-post
