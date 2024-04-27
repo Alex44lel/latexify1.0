@@ -39,7 +39,7 @@ class Tokenizer:
         return "".join(self.decode_seq(token_ids))
 
     def decode_seq(self, token_ids):
-        return [self.dict_id2word[id] for id in token_ids if id in self.dict_id2word]
+        return [self.dict_id2word[id.item()] for id in token_ids if id.item() in self.dict_id2word]
 
     def get_vocab_size(self):
         return self.vocab_size + 1 if self.use_gpt else self.vocab_size + 2
