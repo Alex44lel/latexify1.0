@@ -108,6 +108,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             x = x.to(device)
             y = y.to(device)
 
+            #print(images.dtype,x.dtype,y.dtype)
             logits, loss = model(x, images, y)  # type: ignore
             train_loss += loss.item()
 

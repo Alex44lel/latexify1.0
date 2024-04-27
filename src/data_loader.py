@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import ToTensor
-
+import torch
 
 # TODO: this class should load the dataset directly from pkl file
 # instead relying on external dataframe
@@ -40,11 +40,14 @@ class CustomLatexDataset(Dataset):
         x = tok_label[:-1]
         # print(name)
 
+        int_x = x.round().to(torch.int32)
+        int_y = y.round().to(torch.int32)
+
         image = self.imgs_y[name]
         to_tensor = ToTensor()
         image = to_tensor(image)
 
-        return image, x, y
+        return image, int_x, int_y
 
 
 def get_data_loaders(df_combined, y_combined, split, tokenizer, batch_size=56):
