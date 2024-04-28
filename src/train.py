@@ -28,9 +28,7 @@ def get_model(
     encoder = None
     decoder = None
     embed_dim = None
-    tokenizer = Tokenizer(
-        **{"use_gpt": decoder_name == "gpt", **tokenizer_args}
-    )
+    tokenizer = Tokenizer(**{"use_gpt": decoder_name == "gpt", **tokenizer_args})
 
     if encoder_name == "resnet18":
         encoder = resnet18(**encoder_args)
@@ -69,7 +67,7 @@ def get_model(
         encoder = swin_v2_b(**encoder_args)
         embed_dim = 1024
     else:
-        assert False, f'WRONG NAME ENCODER -> {encoder_name}'
+        assert False, f"WRONG NAME ENCODER -> {encoder_name}"
 
     if decoder_name == "gpt":
         decoder = gpt(
@@ -88,9 +86,7 @@ def get_model(
             }
         )
     else:
-        assert False, f'WRONG NAME DECODER -> {decoder_name}'
-
-      
+        assert False, f"WRONG NAME DECODER -> {decoder_name}"
 
     return LatexifyModel(encoder, decoder, encoder_name + "-" + decoder_name), tokenizer
 
@@ -129,9 +125,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
             train_acc.update(predicted.view(-1), y.view(-1))
 
             # bleu: incorrect impl right now
-            reference_corpus = [
-                [tokenizer.decode_seq(y_seq)] for y_seq in y
-            ]
+            reference_corpus = [[tokenizer.decode_seq(y_seq)] for y_seq in y]
             candidate_corpus = [
                 tokenizer.decode_seq(predicted_seq) for predicted_seq in predicted
             ]
@@ -140,7 +134,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
             # perplexity: lower -> better
             train_per.update(logits, y)
 
-            if (i % 100 == 0):
+            if i % 100 == 0:
                 print(
                     f"Train: Epoch [{epoch+1}/{num_epochs}], Iter: {i}, "
                     f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
@@ -163,37 +157,36 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
 
         # test
         if test_loader is not None:
-          model.eval()
-          test_loss = 0
-          test_acc = MulticlassAccuracy(device=device)
-          test_per = Perplexity(ignore_index=-1, device=device)
-          test_bleu = BLEUScore(n_gram=4, device=device)
-          with torch.inference_mode():
-              for images, x, y in test_loader:
-                  images = images.to(device)
-                  x = x.to(device)
-                  y = y.to(device)
+            model.eval()
+            test_loss = 0
+            test_acc = MulticlassAccuracy(device=device)
+            test_per = Perplexity(ignore_index=-1, device=device)
+            test_bleu = BLEUScore(n_gram=4, device=device)
+            with torch.inference_mode():
+                for images, x, y in test_loader:
+                    images = images.to(device)
+                    x = x.to(device)
+                    y = y.to(device)
 
-                  logits, loss = model(x, images, y)
-                  test_loss += loss.item()
+                    logits, loss = model(x, images, y)
+                    test_loss += loss.item()
 
-                  # ==== Analysis ====
+                    # ==== Analysis ====
 
-                  # accuracy
-                  _, predicted = torch.max(logits, dim=-1)
-                  test_acc.update(predicted.view(-1), y.view(-1))
+                    # accuracy
+                    _, predicted = torch.max(logits, dim=-1)
+                    test_acc.update(predicted.view(-1), y.view(-1))
 
-                  # bleu: incorrect impl right now
-                  reference_corpus = [
-                      [tokenizer.decode_seq(y_seq)] for y_seq in y
-                  ]
-                  candidate_corpus = [
-                      tokenizer.decode_seq(predicted_seq) for predicted_seq in predicted
-                  ]
-                  test_bleu.update(candidate_corpus, reference_corpus)
+                    # bleu: incorrect impl right now
+                    reference_corpus = [[tokenizer.decode_seq(y_seq)] for y_seq in y]
+                    candidate_corpus = [
+                        tokenizer.decode_seq(predicted_seq)
+                        for predicted_seq in predicted
+                    ]
+                    test_bleu.update(candidate_corpus, reference_corpus)
 
-                  # perplexity: lower -> better
-                  test_per.update(logits, y)
+                    # perplexity: lower -> better
+                    test_per.update(logits, y)
 
         avg_loss = test_loss / len(test_loader)
         print(

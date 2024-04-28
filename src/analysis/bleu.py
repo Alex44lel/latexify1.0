@@ -198,9 +198,6 @@ class BLEUScore:
         """
         if torch.sum(self.matches_by_order) == 0:
             return torch.tensor(0.0, dtype=torch.float64, device=self.device)
-        
-        print(self.device)
-        
         return _bleu_score_compute(
             self.input_len,
             self.target_len,

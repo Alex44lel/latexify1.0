@@ -161,7 +161,7 @@ def transformer(
     return model
 
 
-def gpt(vocab_size, block_size=512, n_embd=768, n_layer=6, n_head=8):
+def gpt(vocab_size, block_size=512, n_embd=768, n_layer=6, n_head=8, dropout=0.1):
     """Helper: Construct a GPT Style Decoder Only Model."""
     config = model.GPT.get_default_config()
     config.vocab_size = vocab_size  # type: ignore
@@ -169,4 +169,7 @@ def gpt(vocab_size, block_size=512, n_embd=768, n_layer=6, n_head=8):
     config.n_embd = n_embd  # type: ignore
     config.n_layer = n_layer  # type: ignore
     config.n_head = n_head  # type: ignore
+    config.embd_pdrop = 0.1  # type: ignore
+    config.resid_pdrop = 0.1  # type: ignore
+    config.attn_pdrop = 0.1  # type: ignore
     return model.GPT(config)

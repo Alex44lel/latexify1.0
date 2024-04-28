@@ -1,10 +1,10 @@
 import random
 import numpy as np
-import pandas as pd
 import torch
 import os
 import sys
 import json
+import gc
 
 
 def set_seed(seed):
@@ -25,3 +25,10 @@ def setup_logging(config):
     # log the config itself
     with open(os.path.join(work_dir, "config.json"), "w") as f:
         f.write(json.dumps(config.to_dict(), indent=4))
+
+
+def free_mem(**args):
+    torch.cuda.empty_cache()
+    for arg in args:
+        del arg
+    gc.collect()

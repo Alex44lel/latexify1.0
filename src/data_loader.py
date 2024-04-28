@@ -10,7 +10,7 @@ import torch
 
 
 class CustomLatexDataset(Dataset):
-    def __init__(self, df, y, split, tokenizer,tuple_len):
+    def __init__(self, df, y, split, tokenizer, tuple_len):
         assert split in {"train", "test", "validation"}
 
         if split == "train":
@@ -45,6 +45,7 @@ class CustomLatexDataset(Dataset):
         else:
             y = tok_label[:]
             x = tok_label[:]
+        y[y == self.tokenizer.pad_token_id] = -1  # ignore_index
 
         image = self.imgs_y[name]
         to_tensor = ToTensor()
@@ -53,8 +54,12 @@ class CustomLatexDataset(Dataset):
         return image, x, y
 
 
-def get_data_loaders(df_combined, y_combined, split, tokenizer,tuple_len, batch_size=56):
-    current_dataset = CustomLatexDataset(df_combined, y_combined, split, tokenizer,tuple_len)
+def get_data_loaders(
+    df_combined, y_combined, split, tokenizer, tuple_len, batch_size=56
+):
+    current_dataset = CustomLatexDataset(
+        df_combined, y_combined, split, tokenizer, tuple_len
+    )
 
     current_dataset_loader = DataLoader(
         current_dataset, batch_size=batch_size, shuffle=True
