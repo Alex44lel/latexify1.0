@@ -68,6 +68,8 @@ def get_model(
     elif encoder_name == "swin_v2_b":
         encoder = swin_v2_b(**encoder_args)
         embed_dim = 1024
+    else:
+        assert False, f'WRONG NAME ENCODER -> {encoder_name}'
 
     if decoder_name == "gpt":
         decoder = gpt(
@@ -85,6 +87,10 @@ def get_model(
                 **decoder_args,
             }
         )
+    else:
+        assert False, f'WRONG NAME DECODER -> {decoder_name}'
+
+      
 
     return LatexifyModel(encoder, decoder, encoder_name + "-" + decoder_name), tokenizer
 
@@ -137,8 +143,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             if (i % 100 == 0):
                 print(
                     f"Train: Epoch [{epoch+1}/{num_epochs}], Iter: {i}, "
-                    f"Accuracy: {train_acc.compute():.4f}, BLEU: {
-                        train_bleu.compute():.4f}, "
+                    f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
                     f"Perplexity: {train_per.compute():.4f}"
                 )
 
@@ -148,8 +153,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
 
         print(
             f"Train: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
-            f"Accuracy: {train_acc.compute():.4f}, BLEU: {
-                train_bleu.compute():.4f}, "
+            f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
             f"Perplexity: {train_per.compute():.4f}"
         )
 
@@ -189,8 +193,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
         avg_loss = test_loss / len(test_loader)
         print(
             f"Test: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
-            f"Accuracy: {test_acc.compute():.4f}, BLEU: {
-                test_bleu.compute():.4f}, "
+            f"Accuracy: {test_acc.compute():.4f}, BLEU: {test_bleu.compute():.4f}, "
             f"Perplexity: {test_per.compute():.4f}"
         )
 
