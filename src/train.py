@@ -104,7 +104,11 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
         # train
         model.train()
         train_loss = 0
-        train_acc = MulticlassAccuracy(device=device)
+        train_acc = MulticlassAccuracy(
+            num_classes=tokenizer.vocab_size,
+            ignore_index=-1,
+            average="micro",
+        ).to(device)
         train_per = Perplexity(ignore_index=-1, device=device)
         train_bleu = BLEUScore(n_gram=4, device=device)
         i = 0
@@ -161,7 +165,11 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
         if test_loader is not None:
             model.eval()
             test_loss = 0
-            test_acc = MulticlassAccuracy(device=device)
+            test_acc = MulticlassAccuracy(
+                num_classes=tokenizer.vocab_size,
+                ignore_index=-1,
+                average="micro",
+            ).to(device)
             test_per = Perplexity(ignore_index=-1, device=device)
             test_bleu = BLEUScore(n_gram=4, device=device)
             with torch.inference_mode():

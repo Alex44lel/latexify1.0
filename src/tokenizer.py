@@ -13,7 +13,8 @@ class Tokenizer:
         self.use_gpt = use_gpt
         self.vocab_size = len(self.dict_id2word)
         self.start_token_id = self.vocab_size if not use_gpt else None
-        self.pad_token_id = self.vocab_size if use_gpt else self.vocab_size + 1
+        self.end_token_id = self.vocab_size if use_gpt else self.vocab_size + 1
+        self.pad_token_id = self.end_token_id + 1
         self.max_label_length = 151
 
     def encode(self, tokens: list):
@@ -21,7 +22,11 @@ class Tokenizer:
         len_label = len(encoded_tokens)
         dif = self.max_label_length - len_label
         encoded_tokens = torch.cat(
-            (encoded_tokens, torch.full((dif,), self.pad_token_id, dtype=torch.long))
+            (
+                encoded_tokens,
+                torch.tensor([self.end_token_id], dtype=torch.long),
+                torch.full((dif,), self.pad_token_id, dtype=torch.long),
+            )
         )
         if not self.use_gpt:
             encoded_tokens = torch.cat(
@@ -46,7 +51,7 @@ class Tokenizer:
         ]
 
     def get_vocab_size(self):
-        return self.vocab_size + 1 if self.use_gpt else self.vocab_size + 2
+        return self.vocab_size + 2 if self.use_gpt else self.vocab_size + 3
 
     def get_max_label_length(self):
         return self.max_label_length

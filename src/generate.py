@@ -9,7 +9,15 @@ from torch.nn import functional as F
 
 
 @torch.inference_mode()
-def generate(model, idx, max_new_tokens, temperature=1.0, do_sample=False, top_k=None):
+def generate(
+    model,
+    idx,
+    tokenizer,
+    max_new_tokens=200,
+    temperature=1.0,
+    do_sample=False,
+    top_k=None,
+):
     """
     Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
     the sequence max_new_tokens times, feeding the predictions back into the model each time.
