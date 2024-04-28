@@ -4,13 +4,13 @@ from PIL import Image
 
 
 class Im2LatexDataHandler:
-    def __init__(self, data_dir="./data/dataset5", small=False):
+    def __init__(self, data_dir="./data/dataset5", train_percentage=0.5):
         self.data_dir = data_dir
         self.image_dir = os.path.join(data_dir, "images-post")
         self.training_dir = os.path.join(data_dir, "training_56")
         self.input_data_dir = os.path.join(data_dir, "training_56")
         self.batch_size = 56
-        self.small = small
+        self.train_percentage = train_percentage
 
     def load_data(self, filename):
         """Load DataFrame from a pickle file."""
@@ -39,16 +39,14 @@ class Im2LatexDataHandler:
         df_valid = self.load_data("df_valid.pkl")
         df_test = self.load_data("df_test.pkl")
 
-        if self.small:
-            df_train = df_train.iloc[0:50000]
+        df_train = df_train.iloc[0 : int(len(df_train.index) * self.train_percentage)]
 
         df_train = df_train.drop_duplicates(subset="image", keep="first")
         df_test = df_test.drop_duplicates(subset="image", keep="first")
         df_valid = df_valid.drop_duplicates(subset="image", keep="first")
 
         print()
-        df_combined = pd.concat(
-            [df_train, df_valid, df_test]).reset_index(drop=True)
+        df_combined = pd.concat([df_train, df_valid, df_test]).reset_index(drop=True)
 
         df_combined = df_combined.drop_duplicates(subset="image", keep="first")
         y_combined = {}
