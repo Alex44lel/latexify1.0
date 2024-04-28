@@ -12,7 +12,7 @@ class Tokenizer:
         self.dict_id2word = pd.read_pickle(file_path)
         self.use_gpt = use_gpt
         self.vocab_size = len(self.dict_id2word)
-        self.start_token_id = self.vocab_size
+        self.start_token_id = self.vocab_size if not use_gpt else None
         self.pad_token_id = self.vocab_size if use_gpt else self.vocab_size + 1
         self.max_label_length = 151
 
@@ -23,7 +23,7 @@ class Tokenizer:
         encoded_tokens = torch.cat(
             (encoded_tokens, torch.full((dif,), self.pad_token_id, dtype=torch.long))
         )
-        if self.use_gpt:
+        if not self.use_gpt:
             encoded_tokens = torch.cat(
                 [torch.tensor([self.start_token_id], dtype=torch.long), encoded_tokens]
             )

@@ -45,7 +45,6 @@ class Im2LatexDataHandler:
         df_test = df_test.drop_duplicates(subset="image", keep="first")
         df_valid = df_valid.drop_duplicates(subset="image", keep="first")
 
-        print()
         df_combined = pd.concat([df_train, df_valid, df_test]).reset_index(drop=True)
 
         df_combined = df_combined.drop_duplicates(subset="image", keep="first")

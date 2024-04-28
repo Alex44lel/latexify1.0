@@ -39,12 +39,11 @@ class CustomLatexDataset(Dataset):
         tok_label = self.tokenizer.encode(img_label)
 
         if not self.tokenizer.use_gpt:
-            y = tok_label[1:]
+            y = tok_label[1:].clone().detach()
             x = tok_label[:-1]
-        # print(name)
         else:
-            y = tok_label[:]
-            x = tok_label[:]
+            y = tok_label.clone().detach()
+            x = tok_label
         y[y == self.tokenizer.pad_token_id] = -1  # ignore_index
 
         image = self.imgs_y[name]
