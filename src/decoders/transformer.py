@@ -18,16 +18,35 @@ class EncoderDecoder(nn.Module):
     other models.
     """
 
-    def __init__(self, block_size, encoder, decoder, embed, generator) -> None:
+    def __init__(
+        self,
+        vocab_size,
+        block_size=512,
+        n_embd=768,
+        n_layer=6,
+        n_head=8,
+        d_ff=2048,
+        dropout=0.1,
+        activation="gelu",
+    ) -> None:
         super(EncoderDecoder, self).__init__()
 
         self.block_size = block_size  # for generation as GPT has this attribute
-
-        self.encoder = encoder
-        self.decoder = decoder
-
-        self.embed = embed
-        self.generator = generator
+        self.transformer = nn.Transformer(
+            d_model=n_embd,
+            nhead=n_head,
+            num_encoder_layers=n_layer,
+            num_decoder_layers=n_layer,
+            dim_feedforward=d_ff,
+            dropout=dropout,
+            activation=activation,
+            batch_first=True,
+        )
+        self.embed = nn.Sequential(
+            Embeddings(n_embd, vocab_size),
+            PositionalEncoding(n_embd, dropout, block_size),
+        )
+        self.generator = Generator(n_embd, vocab_size)
 
     def forward(self, idx, hidden, targets=None):
         """Take in and process masked src and target sequences.
@@ -46,20 +65,14 @@ class EncoderDecoder(nn.Module):
         size and should all be encoded.
         3. The `tgt_mask` is specified as the square causal mask.
         """
-        return self.generator(self.decode(self.encode(hidden), idx), targets)
-
-    def encode(self, src):
-        """Adapted to accept input from another modality.
-
-        Note: The src.size(-1) must == embed vector dim
-        """
-        return self.encoder(src)
-
-    def decode(self, memory, tgt):
-        return self.decoder(
-            self.embed(tgt),
-            memory,
-            tgt_mask=nn.Transformer.generate_square_subsequent_mask(tgt.size(1)),
+        return self.generator(
+            self.transformer(
+                hidden,
+                self.embed(idx),
+                tgt_mask=self.transformer.generate_square_subsequent_mask(idx.size(1)),
+                tgt_is_causal=True,
+            ),
+            targets,
         )
 
 
@@ -118,46 +131,26 @@ class PositionalEncoding(nn.Module):
 
 
 def transformer(
-    vocab_size, block_size=512, n_embd=768, n_layer=6, n_head=8, d_ff=2048, dropout=0.1
+    vocab_size,
+    block_size=512,
+    n_embd=768,
+    n_layer=6,
+    n_head=8,
+    d_ff=2048,
+    dropout=0.1,
+    activation="gelu",
 ):
     "Helper: Construct a model from hyperparameters."
     model = EncoderDecoder(
-        block_size,
-        nn.TransformerEncoder(
-            nn.TransformerEncoderLayer(
-                d_model=n_embd,
-                nhead=n_head,
-                dim_feedforward=d_ff,
-                dropout=dropout,
-                activation="gelu",
-                batch_first=True,
-            ),
-            n_layer,
-        ),
-        nn.TransformerDecoder(
-            nn.TransformerDecoderLayer(
-                d_model=n_embd,
-                nhead=n_head,
-                dim_feedforward=d_ff,
-                dropout=dropout,
-                activation="gelu",
-                batch_first=True,
-            ),
-            n_layer,
-        ),
-        nn.Sequential(
-            Embeddings(n_embd, vocab_size),
-            PositionalEncoding(n_embd, dropout, block_size),
-        ),  # embedding + positional encoding
-        Generator(n_embd, vocab_size),
+        vocab_size=vocab_size,
+        block_size=block_size,
+        n_embd=n_embd,
+        n_layer=n_layer,
+        n_head=n_head,
+        d_ff=d_ff,
+        dropout=dropout,
+        activation=activation,
     )  # model output: logits (dim: [vocab]), loss
-
-    # This was important from their code.
-    # Initialize parameters with Glorot / fan_avg.
-    for p in model.parameters():
-        if p.dim() > 1:
-            nn.init.xavier_uniform_(p)
-
     return model
 
 
