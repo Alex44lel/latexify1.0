@@ -190,12 +190,12 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
                     # perplexity: lower -> better
                     test_per.update(logits, y)
 
-        avg_loss = test_loss / len(test_loader)
-        print(
-            f"Test: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
-            f"Accuracy: {test_acc.compute():.4f}, BLEU: {test_bleu.compute():.4f}, "
-            f"Perplexity: {test_per.compute():.4f}"
-        )
+            avg_loss = test_loss / len(test_loader)
+            print(
+                f"Test: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
+                f"Accuracy: {test_acc.compute():.4f}, BLEU: {test_bleu.compute():.4f}, "
+                f"Perplexity: {test_per.compute():.4f}"
+            )
 
     os.makedirs("./models", exist_ok=True)
     torch.save(model.state_dict(), f"./models/latexify-{model.name}.pth")
