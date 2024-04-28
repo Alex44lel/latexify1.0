@@ -1,3 +1,5 @@
+import os
+
 import torch
 import torch.optim as optim
 
@@ -195,4 +197,5 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
             f"Perplexity: {test_per.compute():.4f}"
         )
 
+    os.makedirs("./models", exist_ok=True)
     torch.save(model.state_dict(), f"./models/latexify-{model.name}.pth")
