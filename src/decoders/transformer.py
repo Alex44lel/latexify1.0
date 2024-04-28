@@ -169,7 +169,7 @@ def gpt(vocab_size, block_size=512, n_embd=768, n_layer=6, n_head=8, dropout=0.1
     config.n_embd = n_embd  # type: ignore
     config.n_layer = n_layer  # type: ignore
     config.n_head = n_head  # type: ignore
-    config.embd_pdrop = 0.1  # type: ignore
-    config.resid_pdrop = 0.1  # type: ignore
-    config.attn_pdrop = 0.1  # type: ignore
+    config.embd_pdrop = dropout  # type: ignore
+    config.resid_pdrop = dropout  # type: ignore
+    config.attn_pdrop = dropout  # type: ignore
     return model.GPT(config)
