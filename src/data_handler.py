@@ -40,7 +40,7 @@ class Im2LatexDataHandler:
         df_test = self.load_data("df_test.pkl")
 
         if self.small:
-            df_train = df_train.iloc[0:10000]
+            df_train = df_train.iloc[0:50000]
 
         df_train = df_train.drop_duplicates(subset="image", keep="first")
         df_test = df_test.drop_duplicates(subset="image", keep="first")

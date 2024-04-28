@@ -97,7 +97,7 @@ def get_model(
 
 # Reference
 # - https://nlp.seas.harvard.edu/annotated-transformer/#inference
-def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
+def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     optimizer = optim.AdamW(model.parameters())
@@ -156,39 +156,44 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=10):
             f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
             f"Perplexity: {train_per.compute():.4f}"
         )
+        print(
+            f"BLEU Matches: {train_bleu.matches_by_order}",
+            f"BLEU Possible Matches: {train_bleu.possible_matches_by_order}",
+        )
 
         # test
-        model.eval()
-        test_loss = 0
-        test_acc = MulticlassAccuracy(device=device)
-        test_per = Perplexity(ignore_index=-1, device=device)
-        test_bleu = BLEUScore(n_gram=4, device=device)
-        with torch.inference_mode():
-            for images, x, y in test_loader:
-                images = images.to(device)
-                x = x.to(device)
-                y = y.to(device)
+        if test_loader is not None:
+          model.eval()
+          test_loss = 0
+          test_acc = MulticlassAccuracy(device=device)
+          test_per = Perplexity(ignore_index=-1, device=device)
+          test_bleu = BLEUScore(n_gram=4, device=device)
+          with torch.inference_mode():
+              for images, x, y in test_loader:
+                  images = images.to(device)
+                  x = x.to(device)
+                  y = y.to(device)
 
-                logits, loss = model(x, images, y)
-                test_loss += loss.item()
+                  logits, loss = model(x, images, y)
+                  test_loss += loss.item()
 
-                # ==== Analysis ====
+                  # ==== Analysis ====
 
-                # accuracy
-                _, predicted = torch.max(logits, dim=-1)
-                test_acc.update(predicted.view(-1), y.view(-1))
+                  # accuracy
+                  _, predicted = torch.max(logits, dim=-1)
+                  test_acc.update(predicted.view(-1), y.view(-1))
 
-                # bleu: incorrect impl right now
-                reference_corpus = [
-                    [tokenizer.decode_seq(y_seq)] for y_seq in y
-                ]
-                candidate_corpus = [
-                    tokenizer.decode_seq(predicted_seq) for predicted_seq in predicted
-                ]
-                test_bleu.update(candidate_corpus, reference_corpus)
+                  # bleu: incorrect impl right now
+                  reference_corpus = [
+                      [tokenizer.decode_seq(y_seq)] for y_seq in y
+                  ]
+                  candidate_corpus = [
+                      tokenizer.decode_seq(predicted_seq) for predicted_seq in predicted
+                  ]
+                  test_bleu.update(candidate_corpus, reference_corpus)
 
-                # perplexity: lower -> better
-                test_per.update(logits, y)
+                  # perplexity: lower -> better
+                  test_per.update(logits, y)
 
         avg_loss = test_loss / len(test_loader)
         print(
