@@ -34,5 +34,5 @@ def test_forward():
     _, loss = model(idx, hidden)
     assert loss is None
 
-    # targets = torch.randint(low=0, high=VOCAB_SIZE, size=(BATCH_SIZE, SEQ_SIZE))
-    _, loss = model(idx, hidden, targets=idx)
+    targets = torch.randint(low=0, high=VOCAB_SIZE, size=(BATCH_SIZE, SEQ_SIZE))
+    _, loss = model(idx, hidden, targets=targets)
