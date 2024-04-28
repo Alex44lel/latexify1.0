@@ -110,7 +110,6 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
             average="micro",
         ).to(device)
         train_per = Perplexity(ignore_index=-1, device=device)
-        train_bleu = BLEUScore(n_gram=4, device=device)
         i = 0
         for images, x, y in train_loader:
             images = images.to(device)
@@ -135,7 +134,6 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
             candidate_corpus = [
                 tokenizer.decode_seq(predicted_seq) for predicted_seq in predicted
             ]
-            train_bleu.update(candidate_corpus, reference_corpus)
 
             # perplexity: lower -> better
             train_per.update(logits, y)
@@ -143,7 +141,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
             if i % 100 == 0:
                 print(
                     f"Train: Epoch [{epoch+1}/{num_epochs}], Iter: {i}, "
-                    f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
+                    f"Accuracy: {train_acc.compute():.4f}, "
                     f"Perplexity: {train_per.compute():.4f}"
                 )
 
@@ -153,12 +151,8 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
 
         print(
             f"Train: Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, "
-            f"Accuracy: {train_acc.compute():.4f}, BLEU: {train_bleu.compute():.4f}, "
+            f"Accuracy: {train_acc.compute():.4f}, "
             f"Perplexity: {train_per.compute():.4f}"
-        )
-        print(
-            f"BLEU Matches: {train_bleu.matches_by_order}",
-            f"BLEU Possible Matches: {train_bleu.possible_matches_by_order}",
         )
 
         # test
