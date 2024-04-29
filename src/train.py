@@ -9,6 +9,7 @@ from .encoders.convnext import (
     convnext_small,
     convnext_base,
     convnext_large,
+    convnext_custom,
 )
 from .encoders.swin import swin_v2_t, swin_v2_s, swin_v2_b
 from .decoders.transformer import gpt, transformer
@@ -50,6 +51,9 @@ def get_model(
     elif encoder_name == "convnext_tiny":
         encoder = convnext_tiny(**encoder_args)
         embed_dim = 768
+    elif encoder_name == "convnext_custom":
+        encoder = convnext_custom(**encoder_args)
+        embed_dim = encoder_args["out_channel"]
     elif encoder_name == "convnext_small":
         encoder = convnext_small(**encoder_args)
         embed_dim = 768
