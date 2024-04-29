@@ -2,11 +2,11 @@ from torch import nn
 from torchvision import models
 
 
-def convnext_custom(out_channel=128, **kwargs):
+def convnext_custom(out_channel=256, **kwargs):
     """Adapted from convnext_tiny."""
     assert (
-        out_channel & (out_channel - 1) == 0
-    ), f"Cannot construct model of out_channel {out_channel}, out_channel must be a power of 2"
+        out_channel % 8 == 0
+    ), f"Cannot construct model of out_channel {out_channel}, out_channel must be divisible by 8"
     out1 = out_channel // 8
     out2 = out_channel // 4
     out3 = out_channel // 2
