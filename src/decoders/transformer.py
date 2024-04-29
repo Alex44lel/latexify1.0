@@ -66,7 +66,7 @@ class EncoderDecoder(nn.Module):
         3. The `tgt_mask` is specified as the square causal mask.
         """
         return self.generator(
-            self.transformer(
+            self.transformer.forward(
                 hidden,
                 self.embed(idx),
                 tgt_mask=self.transformer.generate_square_subsequent_mask(idx.size(1)),
@@ -164,6 +164,13 @@ def transformer(
         dropout=dropout,
         activation=activation,
     )  # model output: logits (dim: [vocab]), loss
+
+    # This was important from their code.
+    # Initialize parameters with Glorot / fan_avg.
+    for p in model.parameters():
+        if p.dim() > 1:
+            nn.init.xavier_uniform_(p)
+
     return model
 
 
