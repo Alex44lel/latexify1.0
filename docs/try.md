@@ -3,6 +3,10 @@
 1. Larger Dataset Size
 2. Pretrained Weights
 3. Reduce Embedding Dimensions (!)
+    1. Help GPT model performs better
+4. Initialization Matters
+    1. Help Transformer performs better
+    2. But, the acc is still below 30%
 
 
 ## Analysis
