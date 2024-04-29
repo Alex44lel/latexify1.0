@@ -83,6 +83,8 @@ class Generator(nn.Module):
         super(Generator, self).__init__()
         self.proj = nn.Linear(embed_dim, vocab)
 
+        self.init_weights()
+
     def forward(self, x, targets=None):
         logits = torch.softmax(self.proj(x), dim=-1)
         loss = None
@@ -92,6 +94,11 @@ class Generator(nn.Module):
             )
         return logits, loss
 
+    def init_weights(self):
+        initrange = 0.1
+        self.proj.bias.data.zero_()
+        self.proj.weight.data.uniform_(-initrange, initrange)
+
 
 class Embeddings(nn.Module):
     def __init__(self, embed_size, vocab):
@@ -99,8 +106,14 @@ class Embeddings(nn.Module):
         self.lut = nn.Embedding(vocab, embed_size)
         self.embed_size = embed_size
 
+        self.init_weights()
+
     def forward(self, x):
         return self.lut(x) * math.sqrt(self.embed_size)
+
+    def init_weights(self):
+        initrange = 0.1
+        self.lut.weight.data.uniform_(-initrange, initrange)
 
 
 class PositionalEncoding(nn.Module):
