@@ -32,6 +32,7 @@ def get_model(
     decoder = None
     embed_dim = None
     tokenizer = Tokenizer(**{"use_gpt": decoder_name == "gpt", **tokenizer_args})
+    model_name = encoder_name
 
     if encoder_name == "resnet18":
         encoder = resnet18(**encoder_args)
@@ -54,6 +55,7 @@ def get_model(
     elif encoder_name == "convnext_custom":
         encoder = convnext_custom(**encoder_args)
         embed_dim = encoder_args["out_channel"]
+        model_name += "-" + str(embed_dim)
     elif encoder_name == "convnext_small":
         encoder = convnext_small(**encoder_args)
         embed_dim = 768
@@ -94,7 +96,9 @@ def get_model(
     else:
         assert False, f"WRONG NAME DECODER -> {decoder_name}"
 
-    return LatexifyModel(encoder, decoder, encoder_name + "-" + decoder_name), tokenizer
+    model_name += "-" + decoder_name
+
+    return LatexifyModel(encoder, decoder, model_name), tokenizer
 
 
 # Reference
