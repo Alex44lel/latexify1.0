@@ -113,7 +113,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
         model.train()
         train_loss = 0
         train_acc = MulticlassAccuracy(
-            num_classes=tokenizer.vocab_size,
+            num_classes=tokenizer.get_vocab_size(),
             ignore_index=-1,
             average="micro",
         ).to(device)
@@ -168,7 +168,7 @@ def train(train_loader, test_loader, model, tokenizer, num_epochs=30):
             model.eval()
             test_loss = 0
             test_acc = MulticlassAccuracy(
-                num_classes=tokenizer.vocab_size,
+                num_classes=tokenizer.get_vocab_size(),
                 ignore_index=-1,
                 average="micro",
             ).to(device)
