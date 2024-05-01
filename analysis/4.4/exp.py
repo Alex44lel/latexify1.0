@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(sys.path[0]), "..")))
+
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,13 +39,13 @@ model, tokenizer = get_model(
     "gpt",
     {"out_channel": 64},
     {"dropout": 0.0, "n_layer": 12, "n_head": 8},
-    {},
+    {"file_path": "../../data/dataset5/step2/dict_id2word.pkl"},
 )
 model.load_state_dict(
-    torch.load("./latexify-convnext_custom-64-gpt.pth", map_location="cpu")
+    torch.load("../latexify-convnext_custom-64-gpt.pth", map_location="cpu")
 )
 
-handler = Im2LatexDataHandler(train_percentage=0.0001)
+handler = Im2LatexDataHandler(data_dir="../../data/dataset5", train_percentage=0.0001)
 df_combined, y_combined, tuple_len = handler.load_data_and_images()
 train_loader = get_data_loaders(
     df_combined,
