@@ -1,12 +1,5 @@
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import ToTensor
-import torch
-
-# TODO: this class should load the dataset directly from pkl file
-# instead relying on external dataframe
-#
-# The `__init__` method should take in a tokenizer class.
-# See `LMDataset` (project 3) for more details.
 
 
 class CustomLatexDataset(Dataset):

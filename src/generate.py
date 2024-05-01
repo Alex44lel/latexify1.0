@@ -3,6 +3,8 @@
 # Reference
 # - annotated-transformer: https://nlp.seas.harvard.edu/annotated-transformer/#inference
 # - minGPT: https://github.com/karpathy/minGPT
+# - Simple implementation of beam search in Python:
+#   https://hussainwali.medium.com/simple-implementation-of-beam-search-in-python-64b2d3e2fd7e
 
 import torch
 from torch.nn import functional as F
@@ -58,7 +60,6 @@ def generate(
     return idx
 
 
-# Reference: https://hussainwali.medium.com/simple-implementation-of-beam-search-in-python-64b2d3e2fd7e
 @torch.inference_mode()
 def beam_search(model, image, tokenizer, beam_width=2, max_new_tokens=200):
     """Beam Search.
